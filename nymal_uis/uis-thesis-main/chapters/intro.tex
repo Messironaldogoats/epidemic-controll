@@ -1,0 +1,104 @@
+%!TEX root = ../thesis.tex
+
+%jama %hakon -- joint introduction chapter
+
+\chapter{Introduction}
+\label{ch:intro}
+
+\section{Motivation and Context}
+\label{sec:motivation}
+
+%jama
+The COVID-19 pandemic demonstrated with stark clarity that infectious disease dynamics operate across multiple scales simultaneously \citep{dong2022,mathieu2020}.
+At the population level, aggregate transmission rates determine whether an epidemic grows or recedes.
+At the individual level, the specific contact patterns, mobility behaviour, vaccination status, and comorbidities of each person determine who becomes infected, who is hospitalised, and who dies \citep{zhang2021}.
+Control strategies designed using only population-level models may be adequate on average yet blind to the heterogeneity that drives localised outbreaks, hospital overcrowding in specific regions, or the amplifying effect of high-mobility individuals on cross-community spread.
+
+%hakon
+Control theory has emerged as a natural language for epidemic management.
+Feedback-based strategies, and Model Predictive Control (MPC) in particular, have been applied to epidemic models to design intervention policies that respect constraints such as hospital capacity limits while minimising societal disruption.
+Research has shown that properly designed MPC schemes can drive epidemic compartmental models to disease-free equilibria with formal guarantees of recursive feasibility and stability \citep{esterhuizen2024}.
+However, these guarantees are derived for population-level ordinary differential equation (ODE) models, and it remains important to validate that MPC-generated control signals also produce meaningful epidemic suppression when applied to stochastic, agent-based representations of the same population.
+
+%jama %hakon
+This thesis is the product of a two-part bachelor thesis project.
+The macro-level component, developed by H\aa{}kon Rullestad H\aa{}varstein, implements a multi-city SIRVHDB (Susceptible-Infected-Recovered-Vaccinated-Hospitalised-Dead-Breakthrough) compartmental model in MATLAB/Simulink, controlled by MPC.
+The micro-level component, developed by Mohamed Ahmed Jama, implements a stochastic agent-based model (ABM) that receives the time-varying transmission rate signals produced by the MPC controller and simulates individual-level epidemic dynamics across two interconnected cities.
+The ABM serves as both a validation tool for the macro model and a richer representation of epidemic heterogeneity \citep{polcz2025,zhang2025}.
+
+\section{Problem Statement}
+\label{sec:problem}
+
+%jama %hakon
+This thesis addresses two interconnected problems.
+
+The first problem concerns macro-level epidemic control: given a multi-city SIRVHDB compartmental model calibrated to COVID-19 parameters, can an MPC controller regulate combined hospital load below a predefined capacity threshold, suppress the development of secondary infection waves, and maintain intervention signals within realistic operational limits?
+
+The second problem concerns cross-scale validation: given that the MPC controller has been designed at the macro (population) level to regulate epidemic transmission rates, does the controlled transmission signal also effectively suppress epidemic dynamics when simulated at the individual (agent) level, accounting for stochastic contact processes, spatial heterogeneity, inter-city mobility, and individual variation in disease progression?
+
+A subsidiary problem is calibration: because the macro ODE model and the agent-based model represent epidemic dynamics differently, shared nominal parameters do not guarantee consistent behaviour across the two levels.
+A systematic calibration procedure is required to align both representations before cross-level conclusions can be drawn.
+
+\section{Scope and Delimitations}
+\label{sec:scope}
+
+%hakon
+The macro model covers a two-city SIRVHDB formulation in MATLAB/Simulink.
+The MPC controller is implemented using the MATLAB MPC Toolbox with a linearised plant model.
+Macro simulations are run over horizons of 150 and 500 simulated days with COVID-19-calibrated parameters.
+
+%jama
+The micro model is implemented in MATLAB and receives $\beta(t)$ signals from the macro Simulink model through a defined integration interface.
+No closed-loop feedback from the micro model to the MPC controller is implemented; the coupling is unidirectional in this project.
+The simulation population consists of 1\,000 agents (500 per city) and is run over 150 simulated days.
+Hospital capacities, vaccination rates, and disease parameters are calibrated to be epidemiologically plausible but are not fitted to any specific real-world outbreak.
+The visual simulation component (\texttt{run\_micro\_sim\_visual.m}) is a separate, display-oriented implementation used to illustrate the dynamics; quantitative results are drawn from the non-visual \texttt{run\_micro\_sim.m}.
+
+\section{Contributions}
+\label{sec:contributions}
+
+%hakon
+The specific contributions of H\aa{}kon Rullestad H\aa{}varstein are:
+\begin{itemize}
+  \item Development of the multi-city SIRVHDB compartmental epidemic model in MATLAB/Simulink, incorporating waning immunity, seasonal transmission forcing, inter-city travel and commuting-based mixing.
+  \item Design and implementation of the MPC controller using the MATLAB MPC Toolbox, with hospital load ratio as the regulated output and per-city transmission reduction as the control input.
+  \item Simulation study characterising macro-model behaviour without control (baseline epidemic dynamics, city-to-city interaction, waning immunity effects) and under MPC intervention over 150- and 500-day horizons.
+  \item Analysis of MPC performance, including control signal behaviour, peak reduction, and long-term wave suppression.
+\end{itemize}
+
+%jama
+The specific contributions of Mohamed Ahmed Jama are:
+\begin{itemize}
+  \item Design and MATLAB implementation of a two-city, spatially explicit stochastic agent-based epidemic model with seven disease states: Susceptible ($S$), Infected ($I$), Vaccinated-Infected ($I_v$), Recovered ($R$), Vaccinated ($V$), Hospitalised ($H$), and Dead ($D$).
+  \item Implementation of inter-city commuting dynamics that generate realistic cross-city epidemic coupling without requiring full spatially explicit geography.
+  \item Design of an integration interface that accepts time-series $\beta(t)$ signals from the macro Simulink/MPC model and translates them into per-step infection probabilities for each agent.
+  \item A genetic algorithm (GA) calibration procedure that aligns macro ODE and ABM hospital-load trajectories to ensure both model levels operate in a consistent epidemiological regime.
+  \item A simulation-based evaluation comparing epidemic trajectories under MPC-controlled and uncontrolled transmission, demonstrating the effectiveness of the MPC signal at the micro level.
+  \item A real-time animated visualisation dashboard (\texttt{run\_micro\_sim\_visual.m}) illustrating agent-level dynamics across both cities simultaneously with a live statistics panel.
+\end{itemize}
+
+\section{Thesis Outline}
+\label{sec:outline}
+
+%jama %hakon
+The remainder of this thesis is organised as follows.
+
+Chapter~\ref{ch:related} reviews the relevant literature on compartmental epidemic models, agent-based epidemic models, multi-scale epidemic modelling, and MPC applied to epidemic control.
+
+Chapter~\ref{ch:macro_model} presents the macro-level SIRVHDB compartmental model, the multi-city interaction mechanisms (travel matrix and commuting-based mixing), the MPC formulation, and the Kalman filter state estimator.
+
+Chapter~\ref{ch:macro_results} presents the macro-level simulation results, covering baseline epidemic dynamics, city-to-city interaction scenarios, waning immunity effects, and the performance of the MPC controller over both 150- and 500-day horizons.
+
+Chapter~\ref{ch:integration} describes the macro--micro integration architecture, covering the $\beta(t)$ signal extraction interface, overall execution flow, parameter consistency requirements, and the design choice of unidirectional coupling.
+
+Chapter~\ref{ch:abm} presents the design and implementation of the micro-level agent-based model, including agent states, disease transmission and progression models, the two-city spatial structure, and the aggregation interface.
+
+Chapter~\ref{ch:micro_results} presents the micro-level simulation results, covering the baseline uncontrolled epidemic, the effect of the transmission rate, the two-city comparison, and the GA calibration procedure.
+
+Chapter~\ref{ch:closed_loop} presents the closed-loop simulation results in which the MPC-generated $\beta(t)$ signals drive the agent-based model, comparing the controlled and uncontrolled scenarios across infection dynamics, hospital load, mortality, and capacity constraint adherence.
+
+Chapter~\ref{ch:discussion} discusses and interprets the results from both model levels, evaluates the value of the multi-scale approach, and acknowledges the limitations of the current framework.
+
+Chapter~\ref{ch:conclusion} concludes the thesis with a summary of findings and directions for future work.
+
+Appendix~\ref{apx:instructions} provides instructions for compiling and running both the macro Simulink model and the micro MATLAB simulation.

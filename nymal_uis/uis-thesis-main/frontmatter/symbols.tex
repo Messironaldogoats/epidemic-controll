@@ -1,0 +1,102 @@
+%!TEX root = ../thesis.tex
+
+%jama %hakon -- joint symbols and abbreviations
+
+\chapter*{Symbols and Abbreviations}
+\addcontentsline{toc}{chapter}{Symbols and Abbreviations}
+
+\section*{Roman Symbols}
+
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} & \textbf{Units} \\
+\midrule
+$b$         & Breakthrough reinfection probability (SIRVB model)              & dimensionless \\
+$d_{ij}$    & Euclidean distance between agents $i$ and $j$                   & spatial units \\
+$D_c$       & Dead compartment, city $c$                                      & agents (or fraction) \\
+$E$         & Exposed compartment (SEIR model)                                & agents \\
+$h$         & Daily hospitalisation probability (unvaccinated), $h=0.05$      & dimensionless \\
+$h_v$       & Daily hospitalisation probability (vaccinated breakthrough), $h_v=0.02$ & dimensionless \\
+$H_c$       & Hospitalised compartment, city $c$                              & agents (or fraction) \\
+$H_{\mathrm{cap},c}$ & Hospital bed capacity, city $c$                       & agents \\
+$H_{\mathrm{load}}(t)$ & Combined hospital load ratio $= (H_1+H_2)/(H_{\mathrm{cap},1}+H_{\mathrm{cap},2})$ & dimensionless \\
+$H_{\mathrm{ref}}$  & MPC hospital load reference threshold ($=0.8$)           & dimensionless \\
+$I_c$       & Infected (symptomatic, unvaccinated) compartment, city $c$      & agents (or fraction) \\
+$I_{v,c}$   & Vaccinated-infected (breakthrough) compartment, city $c$        & agents (or fraction) \\
+$I_{0,c}$   & Initial infected seed count, city $c$                          & agents \\
+$\tilde{I}_c(t)$ & Total infectious agents in city $c$: $I_c(t)+I_{v,c}(t)$  & agents \\
+$k$         & Maximum MPC intervention effectiveness ($k=0.70$)              & dimensionless \\
+$M$         & Inter-city travel/contact matrix ($2\times2$)                   & dimensionless \\
+$M_{cc'}$   & Element of $M$: fraction of contacts in city $c$ with city $c'$ & dimensionless \\
+$N$         & Total agent population, $N = N_1 + N_2$                         & agents \\
+$N_c$       & Population of city $c$; baseline $N_1=N_2=500$                  & agents \\
+$N_c^{\mathrm{alive}}(t)$ & Non-dead agents in city $c$ at time $t$          & agents \\
+$p_{\mathrm{commute}}$ & Daily inter-city commute probability ($=0.015$)       & dimensionless \\
+$p_{\mathrm{inf}}^{(S)}(t)$ & Daily infection probability for a susceptible agent (mean-field) & dimensionless \\
+$p_{\mathrm{inf}}^{(V)}(t)$ & Daily infection probability for a vaccinated agent (mean-field)  & dimensionless \\
+$p_{\mathrm{inf}}(i\!\to\!j,t)$ & Proximity-based infection probability from agent $i$ to $j$ & dimensionless \\
+$R_0$       & Basic reproduction number, $R_0 = \beta/\gamma$                 & dimensionless \\
+$R_c$       & Recovered compartment, city $c$                                 & agents (or fraction) \\
+$R_t$       & Time-varying effective reproduction number                       & dimensionless \\
+$r_{\mathrm{inf}}$ & Interaction radius for proximity-based infection ($=2.8$)   & spatial units \\
+$S_c$       & Susceptible compartment, city $c$                               & agents (or fraction) \\
+$T$         & Simulation horizon ($T=150$ days)                               & days \\
+$u_c(t)$    & MPC intervention intensity for city $c$; $u_c\in[0,1]$         & dimensionless \\
+$V_c$       & Vaccinated-susceptible compartment, city $c$                    & agents (or fraction) \\
+$V_{0,c}$   & Initial vaccinated count, city $c$                              & agents \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+\section*{Greek Symbols}
+
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} & \textbf{Units} \\
+\midrule
+$\alpha$    & Contact-intensity scaling factor for proximity infection ($\alpha=0.35$) & dimensionless \\
+$\beta$     & Transmission rate (per contact, per day)                         & day$^{-1}$ \\
+$\beta_c(t)$& MPC-modulated transmission rate in city $c$ at time $t$          & day$^{-1}$ \\
+$\beta_{c,\mathrm{nom}}$ & Nominal (uncontrolled) transmission rate ($=0.45$) & day$^{-1}$ \\
+$\gamma$    & Recovery rate, unvaccinated infected ($=1/12$)                   & day$^{-1}$ \\
+$\gamma_h$  & Hospital discharge (recovery) rate ($=1/25$)                      & day$^{-1}$ \\
+$\gamma_v$  & Recovery rate, vaccinated breakthrough infected ($=1/9$)         & day$^{-1}$ \\
+$\eta$      & Vaccine breakthrough factor: relative infection risk for vaccinated ($\eta=0.60$) & dimensionless \\
+$\kappa_j$  & Vulnerability modifier for agent $j$: $\kappa_j=0.35$ if vaccinated, $1$ otherwise & dimensionless \\
+$\lambda(t)$& Force of infection (unvaccinated)                                & day$^{-1}$ \\
+$\lambda_v(t)$ & Force of infection on vaccinated                              & day$^{-1}$ \\
+$\mu$       & Daily fatality rate, unvaccinated infected ($=0.001$)            & day$^{-1}$ \\
+$\mu_h$     & Daily fatality rate, hospitalised ($=0.02$)                       & day$^{-1}$ \\
+$\mu_v$     & Daily fatality rate, vaccinated breakthrough infected ($=0.0005$)& day$^{-1}$ \\
+$\nu_c$     & Daily vaccination rate, city $c$ ($=0$ in baseline)              & day$^{-1}$ \\
+$\varepsilon$ & Vaccine effectiveness against infection                        & dimensionless \\
+$\omega_R$  & Waning immunity rate after recovery ($=1/110$)                   & day$^{-1}$ \\
+$\omega_V$  & Waning immunity rate, vaccine-induced ($=1/140$)                 & day$^{-1}$ \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+\section*{Abbreviations}
+
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Abbreviation} & \textbf{Meaning} \\
+\midrule
+ABM       & Agent-Based Model \\
+COVID-19  & Coronavirus Disease 2019 \\
+GA        & Genetic Algorithm \\
+MAPE      & Mean Absolute Percentage Error \\
+MATLAB    & Matrix Laboratory (The MathWorks, Inc.) \\
+MPC       & Model Predictive Control \\
+ODE       & Ordinary Differential Equation \\
+PINN      & Physics-Informed Neural Network \\
+QP        & Quadratic Program \\
+SEIR      & Susceptible--Exposed--Infected--Recovered (compartmental model) \\
+SIR       & Susceptible--Infected--Removed (compartmental model) \\
+SIRV      & Susceptible--Infected--Recovered--Vaccinated \\
+SIRVB     & Susceptible--Infected--Recovered--Vaccinated--Breakthrough \\
+SIRVHDB   & Susceptible--Infected--Recovered--Vaccinated--Hospitalised--Dead--Breakthrough \\
+sMAPE     & Symmetric Mean Absolute Percentage Error \\
+WHO       & World Health Organization \\
+\bottomrule
+\end{tabular}
