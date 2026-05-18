@@ -1,0 +1,7 @@
+# Local thesis-template copies; do not publish with the epidemic-control code.
+nymal_uis/
+epedemic_control-main/epidemic-controll/nymal_uis/
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
