@@ -1,0 +1,21 @@
+%!TEX root = ../thesis.tex
+
+%jama %hakon -- joint abstract
+
+\abstract
+
+This thesis presents the design, implementation, and simulation-based evaluation of a two-level epidemic modeling and control framework for multi-city epidemic management.
+The macro-level component, developed by H\aa{}kon Rullestad H\aa{}varstein, implements a multi-city SIRVHDB (Susceptible-Infected-Recovered-Vaccinated-Hospitalized--Dead--Breakthrough) compartmental model in MATLAB/Simulink, coupled with a Model Predictive Control (MPC) controller that regulates hospital load across two interconnected cities.
+The micro-level component, developed by Mohamed Ahmed Jama, implements a stochastic agent-based model (ABM) in MATLAB that simulates explicit individual movement, contact, infection, and disease progression for 1\,000 agents across the same two-city spatial structure.
+
+The macro model is parameterized to COVID-19 epidemiological data, incorporates waning immunity, seasonal transmission forcing, and inter-city interaction through a travel matrix and commuting-based mixing.
+Simulation results confirm that the MPC controller successfully suppresses epidemic growth and restrains combined hospital occupancy below 80\% of total capacity, even over extended 500-day horizons.
+
+The micro model receives time-varying transmission rate signals $\beta_1(t)$ and $\beta_2(t)$ produced by the macro MPC controller and reproduces epidemic trajectories at the individual level.
+Key micro-model features include proximity-based infection with spatial distance weighting, inter-city commuting dynamics, vaccination with breakthrough immunity, and hospital capacity tracking.
+A genetic algorithm (GA) is used to align macro and micro model parameters, minimizing the discrepancy between ODE and ABM hospital-load trajectories.
+
+Simulation results demonstrate that MPC-generated transmission reductions effectively suppress infection peaks and cumulative mortality in both the deterministic macro model and the stochastic agent-based simulation.
+Hospital load remains within capacity thresholds under MPC feedback, and the GA calibration step confirms that both model levels operate in a consistent epidemiological regime.
+The findings support the value of multi-scale modeling in epidemic control: the macro model provides computationally efficient, provably stabilizing control signals, while the micro model reveals heterogeneous, stochastic dynamics that aggregate models cannot represent.
+Together, they constitute a coupled simulation framework with direct relevance to data-driven public health decision-making.

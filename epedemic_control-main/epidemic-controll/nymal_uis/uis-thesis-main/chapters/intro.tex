@@ -1,0 +1,114 @@
+%!TEX root = ../thesis.tex
+
+%jama %hakon -- joint introduction chapter
+
+\chapter{Introduction}
+\label{ch:intro}
+
+\section{Motivation and Context}
+\label{sec:motivation}
+
+The COVID-19 pandemic showed that infectious disease dynamics operate at more than one scale at the same time \citep{dong2022,mathieu2020}.
+At the population level, the average transmission rate determines whether an epidemic grows or shrinks.
+At the individual level, contact patterns, mobility, vaccination status, and personal risk decide who gets infected, hospitalised, or dies \citep{zhang2021}.
+A control strategy designed using only a population-level model can be correct on average.
+It may still miss local outbreaks, regional hospital overload, or the effect of high-mobility individuals on cross-city spread.
+
+Control theory has been applied to epidemic management in several recent works.
+Model Predictive Control (MPC) in particular has been used to compute intervention policies that respect hospital capacity while limiting societal impact.
+For population-level ordinary differential equation (ODE) models, MPC schemes can drive the epidemic to a disease-free equilibrium with formal stability guarantees \citep{esterhuizen2024}.
+Whether the same MPC structure also works when the actual plant is a stochastic, agent-level system has received less attention.
+This is the gap addressed in this thesis.
+
+This thesis is a joint bachelor project with two authors.
+The macro-level part, by H\aa{}kon Rullestad H\aa{}varstein, is a multi-city SIRVHDB compartmental model in MATLAB/Simulink.
+The macro MPC operates in closed loop with the nonlinear ODE plant inside Simulink.
+The micro-level part, by Mohamed Ahmed Jama, is a stochastic agent-based model (ABM) of the same two-city population.
+
+For the cross-scale evaluation, a second MPC controller is implemented in MATLAB.
+Its internal prediction model is a linearised version of the SIRVHDB ODE.
+The linearisation uses parameters fitted by a genetic algorithm (GA) that aligns the ODE response with ABM trajectories.
+At each daily step, this controller reads the ABM's combined hospital load, computes the per-city intervention signals $u_1(t)$ and $u_2(t)$, and the resulting transmission rates $\beta_1(t)$ and $\beta_2(t)$ are applied to the ABM in the next step.
+The ABM is therefore the plant that the MPC controls in closed loop.
+The mismatch between the linearised ODE used for prediction and the stochastic ABM used as the actual plant is part of what this thesis evaluates.
+
+\section{Problem Statement}
+\label{sec:problem}
+
+This thesis addresses two problems.
+
+The first problem is macro-level epidemic control.
+Given a multi-city SIRVHDB compartmental model with COVID-19-based parameters, can an MPC controller keep combined hospital load below a chosen capacity threshold, suppress secondary infection waves, and keep the intervention signal within realistic operational limits?
+
+The second problem is cross-scale validation.
+The MPC controller uses a linearised ODE as its internal prediction model, and the agent-based model is the actual plant being controlled.
+Can this controller still keep hospital load below the capacity threshold and suppress epidemic dynamics, given the mismatch between its linear predictor and the stochastic, individual-level dynamics of the plant?
+
+Both problems depend on a supporting task: parameter calibration.
+The macro ODE and the ABM represent epidemic dynamics in different ways, so shared nominal parameters do not guarantee consistent behaviour.
+A systematic GA-based calibration procedure is needed to align the two models before the linearised plant can be used as the prediction model of the cross-scale MPC controller.
+
+\section{Scope and Delimitations}
+\label{sec:scope}
+
+The macro model is a two-city SIRVHDB system in MATLAB/Simulink.
+The macro MPC controller is built with the MATLAB MPC Toolbox and runs in closed loop with the nonlinear ODE plant inside Simulink.
+All macro simulations use a single 500-day horizon.
+The first 150 days of each run are reported as the early-phase response.
+The full 500 days are reported as the long-horizon response.
+
+The micro model is implemented in MATLAB.
+It runs for $1{,}000$ agents (500 per city) over a 150-day horizon.
+The cross-scale MPC controller is built separately from the Simulink macro MPC.
+It runs in closed loop with the ABM and uses a GA-fit linearisation of the SIRVHDB ODE as its internal prediction model.
+
+Each agent is assigned to a home city at initialisation.
+Inter-city movement is modelled as temporary commuting, not permanent migration.
+The home-city populations $N_1 = N_2 = 500$ remain constant throughout the simulation.
+Deceased agents remain in their home city's bookkeeping.
+
+Both models use parameter values drawn from the COVID-19 literature (transmission rate, recovery rate, hospitalisation rate, vaccine efficacy).
+Neither model is fitted to a specific real-world outbreak.
+The goal is to study control behaviour in an epidemiologically plausible regime, not to reproduce historical case data.
+
+\section{Contributions}
+\label{sec:contributions}
+
+The contributions of this thesis are:
+\begin{itemize}
+  \item A two-city SIRVHDB compartmental epidemic model in MATLAB/Simulink, with waning immunity, seasonal transmission forcing, and inter-city coupling through a travel matrix and commuting-based mixing.
+  \item A macro-level MPC controller that operates in closed loop with the Simulink ODE plant, regulating combined hospital load below a capacity threshold using per-city transmission reduction as the control input, supported by a Kalman filter state estimator.
+  \item A spatially explicit stochastic agent-based model of the same two-city population, with seven disease states, proximity-based infection, vaccination with breakthrough infections, and inter-city commuting.
+  \item Implementation of inter-city commuting as a probabilistic transfer between two abstract regions, generating cross-city epidemic coupling without modelling real geographic coordinates or transport networks.
+  \item A genetic-algorithm (GA) calibration procedure that fits ODE parameters to ABM hospital-load trajectories across several test scenarios, producing a calibrated ODE that is then linearised to serve as the prediction model of the cross-scale MPC controller.
+  \item A closed-loop integration in which the cross-scale MPC controller, using the GA-fit linearised plant as its internal model, controls the ABM directly. The ABM's hospital load is fed back to the controller at each step, and the controller's per-city transmission reduction signals are applied to the ABM in the next step.
+  \item A simulation-based evaluation of MPC performance at both modelling levels, covering macro-level wave suppression and capacity adherence over a 500-day horizon, and cross-scale confirmation that an MPC built from a GA-fit linearised ODE can regulate the stochastic ABM in closed loop despite the model mismatch.
+\end{itemize}
+
+\section{Thesis Outline}
+\label{sec:outline}
+
+The remainder of this thesis is organised as follows.
+
+Chapter~\ref{ch:related} reviews relevant literature on compartmental epidemic models, agent-based epidemic models, multi-scale epidemic modelling, and MPC applied to epidemic control.
+
+Chapter~\ref{ch:macro_model} presents the macro-level SIRVHDB model, the multi-city interaction mechanisms (travel matrix and commuting-based mixing), the macro MPC formulation, and the Kalman filter state estimator.
+
+Chapter~\ref{ch:macro_results} presents the macro-level simulation results over a 500-day horizon, covering baseline epidemic dynamics, city-to-city interaction scenarios, waning immunity effects, and macro MPC controller performance in both the early phase and the long-horizon regime.
+This chapter answers Problem~1.
+
+Chapter~\ref{ch:integration} describes the macro--micro integration architecture: the GA calibration of ODE parameters to ABM trajectories, the linearisation step that produces the prediction model used by the cross-scale MPC controller, and the closed-loop coupling between this controller and the ABM.
+
+Chapter~\ref{ch:abm} presents the design and implementation of the agent-based model, including agent states, disease transmission and progression, the two-city spatial structure, and the aggregation interface used by the cross-scale controller.
+
+Chapter~\ref{ch:micro_results} presents the micro-level simulation results, covering the baseline uncontrolled epidemic, the effect of varying transmission rates, the two-city comparison, and the GA calibration results.
+
+Chapter~\ref{ch:closed_loop} presents the closed-loop simulation results in which the cross-scale MPC controller drives the ABM.
+Controlled and uncontrolled scenarios are compared in terms of infection dynamics, hospital load, mortality, and capacity adherence.
+This chapter answers Problem~2.
+
+Chapter~\ref{ch:discussion} interprets the results from both model levels, discusses the value of the multi-scale approach, and notes the limitations of the current framework.
+
+Chapter~\ref{ch:conclusion} concludes the thesis with a summary of findings and directions for future work.
+
+Appendix~\ref{apx:instructions} gives instructions for compiling and running the macro Simulink model and the cross-scale MATLAB simulation.

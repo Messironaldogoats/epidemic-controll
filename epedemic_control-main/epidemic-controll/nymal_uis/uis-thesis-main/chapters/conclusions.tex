@@ -1,0 +1,63 @@
+%!TEX root = ../thesis.tex
+
+%jama %hakon -- joint conclusions chapter
+
+\chapter{Conclusions}
+\label{ch:conclusion}
+
+This thesis has presented the design, implementation, and simulation-based evaluation of a two-level epidemic modelling and control framework for multi-city epidemic management.
+The macro-level component implements a SIRVHDB compartmental model in MATLAB/Simulink controlled by MPC, while the micro-level component implements a stochastic agent-based epidemic model in MATLAB.
+Both levels share a two-city spatial structure, COVID-19-calibrated parameters, and a unidirectional $\beta(t)$ interface.
+
+\section{Macro-Level Findings}
+\label{sec:conclusions_macro}
+
+%hakon
+The macro SIRVHDB model successfully reproduces key epidemic phenomena: a single wave under constant transmission, multi-wave dynamics under waning immunity, and rapid cross-city spread through the travel matrix and commuting-based mixing.
+Without waning immunity, infections decline to zero after the initial outbreak; with waning immunity, recurring epidemic waves emerge over 500-day horizons, consistent with the multi-year dynamics observed during COVID-19.
+
+The MPC controller demonstrates effective epidemic management at the macro level.
+Over the 150-day primary horizon, the infection peak is reduced from approximately 0.73 to 0.56 (23\% reduction) and the healthcare demand peak falls from 0.32 to 0.26 (19\% reduction) compared to the uncontrolled baseline.
+Over the 500-day extended horizon, the MPC suppresses secondary and tertiary waves by maintaining strong intervention for approximately 300 days, keeping the hospital load ratio near or below the 0.8 reference threshold throughout.
+
+Without control, the healthcare system remains above capacity for approximately 260 consecutive days and is overloaded again after only a 65-day recovery period.
+These results confirm that MPC-based epidemic control can substantially reduce peak healthcare burden and prevent prolonged hospital overload.
+
+The linearised MPC formulation introduces conservatism relative to a nonlinear controller: the controller maintains intervention even when hospital load is comfortably below the reference level, reflecting the persistence of low-level infection in the normalised compartmental model.
+This limitation motivates future work on nonlinear or adaptive MPC designs that can better exploit the actual system state.
+
+\section{Micro-Level Findings}
+\label{sec:conclusions_micro}
+
+%jama
+The agent-based micro model represents 1\,000 individual agents with seven disease states, spatial proximity-based infection, inter-city commuting, and hospital capacity tracking.
+It receives time-varying transmission rate signals from the MPC controller operating on the macro compartmental model and simulates individual-level epidemic dynamics in response.
+
+The principal finding is that MPC-generated transmission rate reductions, designed for and validated on the macro ODE model, also effectively suppress epidemic dynamics in the stochastic agent-based simulation.
+Peak infection counts and cumulative mortality are substantially reduced in the MPC-controlled scenario compared to an uncontrolled baseline at constant $\beta = 0.45$.
+Hospital load remains near or below the MPC reference threshold throughout the controlled scenario, validating that the macro-level control objective translates meaningfully to the micro domain.
+
+An important part of this result is the calibration step used to align the two model levels.
+Because the macro ODE and ABM represent epidemic dynamics differently, consistency between them cannot be guaranteed from shared nominal parameters alone.
+By using a genetic algorithm to match the macro hospital-load trajectory to the mean ABM response (calibrated parameters: $\beta_1 = 0.1505$, $\gamma = 0.1404$, $h = 0.00276$, GA cost~$= 1.00425$), the study ensures that both models operate in a comparable epidemiological regime.
+This makes the transfer of MPC decisions from the macro model to the stochastic micro simulation substantially more convincing.
+
+Beyond this validation result, the agent-based model reveals heterogeneous dynamics: stochastic extinction events, spatial clustering, and bursty inter-city transmission that the deterministic macro ODE cannot represent.
+These dynamics are epidemiologically important and illustrate the value of multi-scale modelling: the macro model provides computationally efficient, formally grounded control design, while the micro model provides a richer, more realistic simulation environment for policy evaluation \citep{polcz2025}.
+
+\section{Overall Assessment}
+\label{sec:conclusions_overall}
+
+%jama %hakon
+The combined framework demonstrates that control theory and agent-based simulation are complementary rather than competing tools.
+Control theory provides the mathematical rigour needed to design provably effective interventions \citep{esterhuizen2024}.
+Agent-based simulation provides the behavioural and spatial richness needed to evaluate those interventions under realistic conditions.
+Their integration, through the minimal $\beta(t)$ interface, allows both model levels to contribute their respective strengths without requiring tight online coupling.
+
+The framework is modular and extensible.
+The interface between macro and micro levels is a simple time-series handoff that can accommodate any macro-level control signal and any micro-level simulation implementation.
+Future extensions --- bidirectional coupling, larger populations, realistic contact networks, uncertainty quantification, and data calibration to real Norwegian COVID-19 data --- build naturally on this foundation.
+
+In the broader context of epidemic management, this project demonstrates that a relatively simple integration architecture can produce meaningful cross-scale consistency.
+The MPC controller, designed for a population-level ODE, successfully suppresses epidemic dynamics in a stochastic individual-level simulation without any modification or re-tuning.
+This robustness suggests that the macro-to-micro signal transfer is a viable approach for validating and stress-testing control strategies before deployment, and that the multi-scale framework has direct relevance to evidence-based public health decision-making.
