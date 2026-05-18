@@ -1,7 +1,24 @@
 # Local thesis-template copies; do not publish with the epidemic-control code.
 nymal_uis/
-epedemic_control-main/epidemic-controll/nymal_uis/
 
 # macOS metadata
 .DS_Store
 **/.DS_Store
+
+# MATLAB and Simulink generated files
+slprj/
+*.slxc
+*.asv
+*.m~
+
+# Generated simulation/calibration workspaces
+integration/results_*.mat
+integration/ga_workspace_*.mat
+integration/abm_*_ensemble.mat
+
+# Keep calibrated plant files required to run the project.
+!macro/plant.mat
+!macro/plant_ga.mat
+
+# Local editor settings
+.vscode/
